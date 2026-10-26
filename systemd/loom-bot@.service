@@ -1,0 +1,20 @@
+[Unit]
+Description=loom bot for %i (the instance's Discord channel is the front door)
+After=network-online.target magpie.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/.hermes/scripts/loom
+Environment=HOME=/root
+Environment=GOPATH=/root/.local/share/go
+Environment=PATH=/root/.local/share/mise/shims:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/root/.hermes/scripts/loom/loom --home /root/.hermes/fb-go/%i bot
+Restart=always
+RestartSec=10
+StandardOutput=append:/root/.hermes/fb-go/%i/bot.service.log
+StandardError=append:/root/.hermes/fb-go/%i/bot.service.log
+
+[Install]
+WantedBy=multi-user.target

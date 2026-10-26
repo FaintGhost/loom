@@ -1,0 +1,214 @@
+{
+  "repo": "/srv/clones/example",
+  "base": "origin/main",
+  "agent": [
+    "codex",
+    "exec",
+    "-c",
+    "model_provider=magpie",
+    "-c",
+    "model={model}",
+    "--sandbox",
+    "workspace-write",
+    "--skip-git-repo-check",
+    "-o",
+    "{last}",
+    "{prompt}"
+  ],
+  "setup": "go mod download",
+  "verify": "go vet ./... && go build ./... && go test ./...",
+  "timeout_seconds": 720,
+  "hidden": [
+    "/etc/loom",
+    "/root/.config/gh",
+    "/root/.codex",
+    "/root/.ssh"
+  ],
+  "github_repo": "owner/example",
+  "instance_name": "example",
+  "toolchain": "go",
+  "publish": true,
+  "ready_label": "ready-for-agent",
+  "approved_label": "ready-for-agent",
+  "needs_human_label": "ready-for-human",
+  "setup_timeout_seconds": 1200,
+  "verify_timeout_seconds": 1800,
+  "poll_seconds": 120,
+  "max_attempts": 2,
+  "red_verify": "go test ./...",
+  "test_globs": [
+    "**/*_test.go",
+    "**/testdata/**",
+    "frontend/**/*.test.*",
+    "frontend/**/*.spec.*",
+    "scripts/*_test.py"
+  ],
+  "red_file_globs": [
+    "**/*_test.go",
+    "frontend/src/**/*.test.*",
+    "frontend/src/**/*.spec.*",
+    "scripts/*_test.py"
+  ],
+  "weakening_patterns": [
+    "\\bt\\.Skip(Now|f)?\\(",
+    "\\.(skip|only|todo)\\(",
+    "\\bx(it|describe|test)\\(",
+    "@unittest\\.skip",
+    "@pytest\\.mark\\.(skip|xfail)"
+  ],
+  "guard_paths": [
+    ".github/**",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "LESSONS.md",
+    ".gitignore",
+    ".fb-attachments/**",
+    ".fb-pr.md",
+    ".fb-triage.json",
+    ".fb-review.json",
+    "go.mod",
+    "go.sum",
+    "vendor/**",
+    ".npmrc",
+    "**/.env",
+    "**/.env.*",
+    "**/go.mod",
+    "**/go.sum",
+    "**/package.json",
+    "**/package-lock.json",
+    "**/pnpm-lock.yaml",
+    "**/yarn.lock",
+    ".env",
+    ".env.*",
+    "package.json",
+    "package-lock.json",
+    "pnpm-lock.yaml",
+    "yarn.lock"
+  ],
+  "secret_files": [
+    "/etc/loom",
+    "/root/.config/gh/hosts.yml"
+  ],
+  "guard_weakening": true,
+  "sandbox_network": false,
+  "sandbox_env": {
+    "GOCACHE": "/tmp/example-gocache",
+    "GOFLAGS": "-mod=readonly -buildvcs=false",
+    "GOLANGCI_LINT_CACHE": "/tmp/example-golangci-cache",
+    "GOMAXPROCS": "4",
+    "GOPROXY": "off",
+    "GOROOT": "/root/.local/share/mise/installs/go/1.26.9",
+    "GOTOOLCHAIN": "local",
+    "npm_config_cache": "/tmp/example-npm-cache",
+    "npm_config_offline": "true"
+  },
+  "sandbox_tmpfs": [
+    "$GOCACHE"
+  ],
+  "harness_env": {
+    "GOCACHE": "/tmp/fb-gocache",
+    "GOFLAGS": "-mod=mod"
+  },
+  "harness": "codex",
+  "gui_harness": "codex",
+  "harness_mode": "herdr",
+  "commands": {
+    "claude": {
+      "kind": "claude",
+      "model": "claude/claude-sonnet-5-5",
+      "args": [
+        "claude",
+        "-p",
+        "{prompt}",
+        "--model",
+        "{model}",
+        "--permission-mode",
+        "acceptEdits",
+        "--output-format",
+        "text"
+      ]
+    },
+    "codex": {
+      "kind": "codex",
+      "model": "codex/gpt-6-astra",
+      "args": [
+        "codex",
+        "exec",
+        "-c",
+        "model_provider=magpie",
+        "-c",
+        "model={model}",
+        "--sandbox",
+        "workspace-write",
+        "--skip-git-repo-check",
+        "-o",
+        "{last}",
+        "{prompt}"
+      ],
+      "image_args": [
+        "-i",
+        "{path}"
+      ]
+    },
+    "omp": {
+      "kind": "omp",
+      "args": [
+        "omp",
+        "run",
+        "{prompt}"
+      ]
+    }
+  },
+  "triage_enabled": true,
+  "triage_timeout_seconds": 480,
+  "category_labels": {
+    "bug": "bug",
+    "feature_request": "enhancement"
+  },
+  "review_enabled": true,
+  "review_timeout_seconds": 600,
+  "review_fix_rounds": 1,
+  "max_review_rounds": 3,
+  "safe_max_lines": 400,
+  "discord_guild": "000000000000000000",
+  "discord_channel": "000000000000000000",
+  "max_per_user_per_day": 5,
+  "max_queue": 20,
+  "max_reopens": 3,
+  "magpie_url": "http://127.0.0.1:3425",
+  "decider_model": "typesafe/jev-latest",
+  "title_model": "group/auto-glm-5-3-flash",
+  "dedupe_enabled": true,
+  "dedupe_min_confidence": 0.8,
+  "dedupe_candidates": 15,
+  "auto_kinds": [
+    "bug"
+  ],
+  "max_auto_work": 1.6,
+  "attachment_max_files": 6,
+  "attachment_max_bytes": 8000000,
+  "attachment_content_types": [
+    "image/png",
+    "image/jpeg",
+    "image/webp",
+    "image/gif",
+    "text/plain",
+    "application/json",
+    "application/zip"
+  ],
+  "question_timeout_seconds": 480,
+  "releases": true,
+  "retro": {
+    "enabled": true,
+    "timeout_seconds": 1200,
+    "hours": 24,
+    "automation_home": "/srv/loom/automation",
+    "effectgo_home": "/srv/loom/effectgo",
+    "compatibility_module": "/srv/clones/loom",
+    "effectgo_binary": "/opt/effectgo/bin/effectgo",
+    "effectgo_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "effectgo_revision": "81e442d57bdac85887976c0112a84d13c2f7214f"
+  },
+  "discord_token_file": "/etc/loom/example-bot.token",
+  "magpie_key_file": "/etc/loom/gateway.key"
+}

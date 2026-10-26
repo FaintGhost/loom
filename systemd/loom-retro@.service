@@ -1,0 +1,16 @@
+[Unit]
+Description=loom evidence review and compatibility checks for %i
+After=network-online.target magpie.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/root/.hermes/scripts/loom
+Environment=HOME=/root
+Environment=GOPATH=/root/.local/share/go
+Environment=PATH=/root/.local/share/mise/shims:/root/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/root/.hermes/scripts/loom/loom --home /root/.hermes/fb-go/%i retro
+TimeoutStartSec=1h
+StandardOutput=append:/root/.hermes/fb-go/%i/retro.service.log
+StandardError=append:/root/.hermes/fb-go/%i/retro.service.log
